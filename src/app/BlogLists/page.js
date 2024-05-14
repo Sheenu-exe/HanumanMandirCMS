@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, deleteDoc } from '@firebase/firestore';
 import { db } from '../API/firebase.config';
 import Layout from '@/components/Layout';
+import { doc } from '@firebase/firestore';
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
@@ -27,7 +28,7 @@ const BlogList = () => {
   return (
     <Layout>
     <div className="mt-6">
-      <h2>Added Blogs</h2>
+      <header className='h-[10vh]'><h2 className='text-2xl font-bold mx-3'>Added Blogs</h2></header>
       {blogs.length > 0 ? (
         <ul className='flex'>
           {blogs.map((blog) => (
