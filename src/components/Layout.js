@@ -6,12 +6,12 @@ import { Sidebar } from "./dashboard";
 
 const Layout = ({ children }) => {
   return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex flex-col">
+    <main className="flex min-h-screen fixed top-0 left-0 flex-col">
+      <div className="flex flex-col ">
         <Header />
-        <div className="flex">
+        <div className="flex ">
           <Sidebar />
-          <div className="flex-grow">{children}</div>
+          <div className="flex-grow  overflow-scroll w-[80vw]">{children}</div>
         </div>
       </div>
       

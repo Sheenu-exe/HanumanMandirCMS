@@ -1,34 +1,31 @@
-"use client"
+"use client";
+
 
 import { useState, useEffect } from "react";
-import { collection, getDocs, query } from "@firebase/firestore";
+import { collection, getDocs, query, orderBy } from "@firebase/firestore";
 import { db } from "../API/firebase.config";
 
+import Layout from "@/components/Layout";
 
-import Layout from "@/components/Layout"
 const CMS = () => {
-  const [donations, setDonations] = useState([]); 
-  const [totalAmount, setTotalAmount] = useState(0); // State for total donation amount
-  const [totalDonationsCount, setTotalDonationsCount] = useState(0); // State for total donations count
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [upcomingAarti, setUpcomingAarti] = useState(null);
+  const [upcomingPrasadi, setUpcomingPrasadi] = useState(null);
 
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        // Create a query (optional for filtering/sorting)
-        const donationsRef = collection(db, "donations"); // Reference the donations collection
-        const q = query(donationsRef); // Create a basic query to fetch all donations
-
-        // Get donation documents
+        const donationsRef = collection(db, "donations");
+        const q = query(donationsRef);
         const donationSnapshot = await getDocs(q);
 
         const donationData = donationSnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data(), // Spread operator to include all donation data fields
+          ...doc.data(),
         }));
 
         setDonations(donationData);
 
-        // Calculate and set total amount and count
         const total = donationData.reduce((acc, donation) => acc + parseInt(donation.amount), 0);
         setTotalAmount(total);
         setTotalDonationsCount(donationData.length);
@@ -37,63 +34,88 @@ const CMS = () => {
       }
     };
 
-    fetchDonations(); // Call the function on component mount
-  }, []); // Empty dependency array to run only once on mount
+    const fetchUpcomingAarti = async () => {
+      try {
+        const aartiRef = collection(db, "verifiedAarti");
+        const q = query(aartiRef, orderBy("date", "asc"));
+        const aartiSnapshot = await getDocs(q);
 
-    return(
-      <Layout>
-        <div className="h-[100vh] w-full flex flex-col">
-            <div className="flex gap-2 h-fit sm:mt-6 justify-around w-full sm:items-[none] items-center sm:flex-row flex-col">
-              <p className="text-left ml-4 w-full text-3xl">Stats</p>
-            <article className="flex sm:w-[30%] w-[95%] h-fit justify-between  rounded-lg border border-gray-100 bg-white p-6">
-  <div>
-    <p className="text-sm text-gray-500">Members</p>
+        const currentDate = new Date();
+        const upcomingAartiData = aartiSnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .find((aarti) => new Date(aarti.date) > currentDate);
 
-    <p className="text-2xl font-medium text-gray-900">64</p>
-  </div>
-</article>
-<article className="flex sm:w-[30%] w-[95%] h-fit justify-between rounded-lg border border-gray-100 bg-white p-6">
-  <div>
-    <p className="text-sm text-gray-500">Collected Donation</p>
+        setUpcomingAarti(upcomingAartiData);
+      } catch (error) {
+        console.error("Error fetching upcoming Aarti:", error);
+      }
+    };
 
-    <p className="text-2xl font-medium text-gray-900"><p>₹{totalAmount}</p></p>
-  </div>
+    const fetchUpcomingPrasadi = async () => {
+      try {
+        const prasadiRef = collection(db, "verifiedPrasadi");
+        const q = query(prasadiRef, orderBy("date", "asc"));
+        const prasadiSnapshot = await getDocs(q);
 
+        const currentDate = new Date();
+        const upcomingPrasadiData = prasadiSnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .find((prasadi) => new Date(prasadi.date) > currentDate);
 
-</article>
-<article className="flex h-fit sm:w-[30%] w-[95%] justify-between rounded-lg border border-gray-100 bg-white p-6">
-  <div>
-    <p className="text-sm text-gray-500">Aarti Slots</p>
+        setUpcomingPrasadi(upcomingPrasadiData);
+      } catch (error) {
+        console.error("Error fetching upcoming Prasadi:", error);
+      }
+    };
 
-    <p className="text-2xl font-medium text-gray-900">5</p>
-  </div>
+    fetchDonations();
+    fetchUpcomingAarti();
+    fetchUpcomingPrasadi();
+  }, []);
 
-
-</article>
-</div>
-<div className="w-full h-full flex justify-center items-center">
-    <div className="w-[97.5%] rounded-lg border gap-y-2 border-gray-100 h-[90%] flex sm:flex-row flex-col justify-center items-center gap-x-7">
-    <div class="sm:w-[45%] w-[95%]  h-[55%] flex flex-col rounded-lg bg-gray-200">
-        <p className="text-xl m-3">आगामी आरती:</p>
-        <div className="flex w-full">
-        <div className="w-full mx-3 flex flex-col">
-            <p className="text-lg">मंगलवार</p>
-            <p className="text-sm">सुरेशजी पुखराजजी</p>
+  return (
+    <Layout>
+      <div className="h-[100vh] w-full flex flex-col">
+  
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="w-[97.5%] rounded-lg border gap-y-2 border-gray-100 h-[90%] sm:flex-row flex-wrap flex flex-col justify-center items-center gap-x-7">
+            <div id="upcomingAarti" className="sm:w-[90%] w-[95%] h-[70%] flex flex-col justify-center rounded-lg bg-gray-200">
+              <p className="text-4xl mx-3">आगामी आरती:</p>
+              {upcomingAarti ? (
+                <div className="mx-3 gap-y-3 flex flex-col">
+                <p className="text-2xl font-medium text-gray-900">आगामी आरती {upcomingAarti.name} के द्वारा दिनांक {upcomingAarti.date} को है</p>
+                <p className="text-xl font-medium text-gray-900">पिता का नाम:{upcomingAarti.fatherName}</p>
+                <p className="text-lg font-medium text-gray-900">Mobile Number:{upcomingAarti.mobileNumber}</p>
+                </div>
+              ) : (
+                <p className="text-2xl font-medium text-gray-900">No upcoming Aarti Booking</p>
+              )}
             </div>
-        <div className="w-full mx-3 flex flex-col">
-            <p className="text-lg">शनिवार</p>
-            <p className="text-sm">भंवरलालजी पुखराजजी</p>
+            <div id="upcomingPrasadi"className="sm:w-[90%] w-[95%] h-[70%] flex flex-col justify-center rounded-lg bg-gray-200">
+              <p className="text-4xl mx-3">आगामी प्रसाद:</p>
+              {upcomingPrasadi ? (
+                <div className="mx-3 gap-y-3 flex flex-col">
+                <p className="text-2xl font-medium text-gray-900">आगामी प्रसाद {upcomingPrasadi.name} के द्वारा दिनांक {upcomingPrasadi.date} को है</p>
+                <p className="text-xl font-medium text-gray-900">पिता का नाम:{upcomingPrasadi.fatherName}</p>
+                <p className="text-lg font-medium text-gray-900">Mobile Number:{upcomingPrasadi.mobileNumber}</p>
+                </div>
+              ) : (
+                <p className="text-2xl font-medium text-gray-900">No upcoming Prasadi</p>
+              )}
             </div>
+            <div className="sm:w-[90%] w-[95%] h-[75%] rounded-lg bg-gray-200"></div>
+            <div className="sm:w-[90%] w-[95%] h-[75%] rounded-lg bg-gray-200"></div>
+          </div>
         </div>
-    </div>
-  <div className="sm:w-[45%] w-[95%] h-[55%]  rounded-lg bg-gray-200"></div>
-  <div className="sm:w-[45%] w-[95%] h-[55%] rounded-lg bg-gray-200"></div>
-  <div className="text-sm w-[95%] h-[45%] rounded-lg bg-gray-200"></div>
-    </div>
-</div>
-        </div>
-        </Layout>
-    )
-}
+      </div>
+    </Layout>
+  );
+};
 
-export default CMS
+export default CMS;
