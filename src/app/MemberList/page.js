@@ -92,8 +92,10 @@ const MemberList = () => {
                 <div className="space-y-4 text-center ">
                   <div className="my-2 space-y-1">
                     <h2 className="text-xl font-semibold text-wrap sm:text-2xl">{member.Name}</h2>
+                    <p className="px-5 text-xs sm:text-base">{member.fatherName}</p>
                     <p className="px-5 text-xs sm:text-base">{member.number}</p>
                     <a target="_blank" href={member.paymentScreenshotUrl} className="underline flex items-center justify-center"><CgLink/>Payment</a>
+                    <a target="_blank" href={member.aadhaarPicUrl} className="underline flex items-center justify-center"><CgLink/>Aadhaar Link</a>
                   </div>
                   <div className="flex justify-center space-x-2">
                     <button
