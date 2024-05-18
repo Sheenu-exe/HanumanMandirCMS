@@ -5,7 +5,7 @@ import Layout from "@/components/Layout";
 import { collection, getDocs, query } from "@firebase/firestore";
 import { db } from "../API/firebase.config"; // Assuming firebase config is imported
 
-const VerifiedDonation = () => {
+const VerifiedAarti = () => {
   const [donations, setDonations] = useState([]); // Array to store fetched donations
   const [totalAmount, setTotalAmount] = useState(0); // State for total donation amount
   const [totalDonationsCount, setTotalDonationsCount] = useState(0); // State for total donations count
@@ -13,7 +13,7 @@ const VerifiedDonation = () => {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const donationsRef = collection(db, "verifiedPrasadi"); // Reference the donations collection
+        const donationsRef = collection(db, "verifiedAarti"); // Reference the donations collection
         const q = query(donationsRef); // Create a basic query to fetch all donations
 
         const donationSnapshot = await getDocs(q);
@@ -44,7 +44,7 @@ const VerifiedDonation = () => {
     <Layout>
     <div>
     <nav className="h-[10vh] flex sm:flex-row flex-col justify-between mt-5 items-center gap-x-3">
-          <p className="text-xl sm:block hidden">Verified Prasadi</p>
+          <p className="text-xl sm:block hidden">Verified Aarti</p>
           <div className="flex sm:justify-normal justify-center items-center gap-x-3">
             <p className="mx-3 text-xl">Total: ₹{totalAmount}</p>
             <p className="mx-3">Donations : {totalDonationsCount}</p>
@@ -114,4 +114,4 @@ const VerifiedDonation = () => {
   );
 };
 
-export default VerifiedDonation;
+export default VerifiedAarti;

@@ -8,7 +8,7 @@ import { addDoc } from "@firebase/firestore";
 import { GoCheckCircle } from "react-icons/go";
 import { TiDeleteOutline } from "react-icons/ti";
 
-const DonationList = () => {
+const unverifiedAarti = () => {
   const [donations, setDonations] = useState([]); // Array to store fetched donations
   const [totalAmount, setTotalAmount] = useState(0); // State for total donation amount
   const [totalDonationsCount, setTotalDonationsCount] = useState(0); // State for total donations count
@@ -16,7 +16,7 @@ const DonationList = () => {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const donationsRef = collection(db, "unverifiedPrasadi"); // Reference the donations collection
+        const donationsRef = collection(db, "unverifiedAarti"); // Reference the donations collection
         const q = query(donationsRef); // Create a basic query to fetch all donations
 
         const donationSnapshot = await getDocs(q);
@@ -44,14 +44,14 @@ const DonationList = () => {
   const transferToVerified = async (donation) => {
     try {
       // Create a reference to the verifiedDonations collection
-      const verifiedDonationsRef = collection(db, "verifiedPrasadi");
+      const verifiedDonationsRef = collection(db, "verifiedAarti");
 
       // Add the donation data to the verifiedDonations collection
       const addedDocRef = await addDoc(verifiedDonationsRef, donation);
       console.log("Donation transferred to verifiedDonations:", addedDocRef.id); // Optional for logging
 
       // After successful transfer, delete the donation from the unverified collection
-      const donationRef = doc(db, "unverifiedPrasadi", donation.id);
+      const donationRef = doc(db, "unverifiedAarti", donation.id);
       await deleteDoc(donationRef);
       console.log("Donation deleted from unverifiedPrasadi:", donation.id); // Optional for logging
 
@@ -123,7 +123,7 @@ const DonationList = () => {
 
   const handleVerify = async (donationId) => {
     try {
-      const donationRef = doc(db, "unverifiedPrasadi", donationId);
+      const donationRef = doc(db, "unverifiedAarti", donationId);
 
       // Get the entire donation object before updating
       const donationSnapshot = await getDoc(donationRef);
@@ -145,7 +145,7 @@ const DonationList = () => {
 
   const handleDelete = async (donationId) => {
     try {
-      const donationRef = doc(db, "unverifiedPrasadi", donationId);
+      const donationRef = doc(db, "unverifiedAarti", donationId);
       await deleteDoc(donationRef);
 
       // Update local state to remove deleted donation
@@ -155,7 +155,7 @@ const DonationList = () => {
       // Update total amount and count if necessary (based on donation amount)
       const remainingDonations = updatedDonations.filter((donation) => !donation.verified);
       const updatedTotalAmount = remainingDonations.reduce(
-        (acc, donation) => acc + parseInt(donation.amount),
+        (acc, donation) => acc + parseInt(donation.donationAmount),
         0
       );
       setTotalAmount(updatedTotalAmount);
@@ -169,7 +169,7 @@ const DonationList = () => {
     <Layout>
       <div>
         <nav className="h-[10vh] flex sm:flex-row flex-col justify-between mt-5 items-center gap-x-3">
-          <p className="text-xl sm:block hidden">Unverified Prasadi</p>
+          <p className="text-xl sm:block hidden">Unverified Aarti</p>
           <div className="flex sm:justify-normal justify-center items-center gap-x-3">
             <p className="mx-3 text-xl">Total: ₹{totalAmount}</p>
             <p className="mx-3">Donations : {totalDonationsCount}</p>
@@ -181,12 +181,13 @@ const DonationList = () => {
               <li key={donation.id} className="sm:max-w-xs w-[95%] m-3 mb-0 p-6 rounded-md shadow-md dark:bg-gray-9">
                 <img src={donation.imageUrl} alt="donationamount" className="object-cover object-center w-full h-[40vh] rounded-md dark:bg-gray-500" />
                 <div className="mt-6 mb-2">
-                <div className="flex w-full justify-between">
-                  <span className="block text-lg font-medium tracki uppercase ">{donation.name}</span>
-                  <span className="block text-lg font-medium tracki uppercase ">{donation.date}</span>
+                <div className="flex w-full flex-col gap-y-1 justify-between">
+                  <span className="block  font-medium tracki uppercase">{donation.name}</span>
+                  <span className="block  font-medium tracki uppercase">{donation.fatherName}</span>
+                  <span className="block  font-medium tracki uppercase">{donation.date}</span>
+                  <h2 className="block font-medium tracki uppercase">₹ {donation.donationAmount}/-</h2>
                   </div>
-                  <h2 className="text-lg font-semibold tracki">₹ {donation.donationAmount}/-</h2>
-                  <div className="flex justify-end">
+                  <div className="flex justify-around w-full">
                     {donation.verified ? (
                       <button className="px-3 py-1 bg-green-500 text-white rounded-md disabled:opacity-50">Verified</button>
                     ) : (
@@ -226,4 +227,4 @@ const DonationList = () => {
   );
 }
 
-export default DonationList
+export default unverifiedAarti

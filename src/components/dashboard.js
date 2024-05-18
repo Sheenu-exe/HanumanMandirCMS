@@ -13,8 +13,10 @@ export const Sidebar = () => {
         
         श्री गोकुलवाड़ी हनुमानजी मंदिर</li>
         <li><Link href={"/"}>Home</Link></li>
-        <li><Link href={"/donations"}>Unverified Donations</Link></li>
-        <li><Link href={"/verifiedDonations"}>Verified Donations</Link></li>
+        <li><Link href={"/donations"}>Prasadi Verification</Link></li>
+        <li><Link href={"/verifiedDonations"}>Verified Prasadi</Link></li>
+        <li><Link href={"/unverifiedAarti"}>Aarti Verification</Link></li>
+        <li><Link href={"/verifiedAarti"}>Verified Aarti</Link></li>
       <li><Link href={"/BlogsForm"}>Add Blogs</Link></li>
       <li><Link href={"/BlogLists"}>Blogs</Link></li>
       <li><Link href={"/MemberList"}>Members Verification</Link></li>
