@@ -83,8 +83,8 @@ const CMS = () => {
     <Layout>
       <div className="h-[100vh] w-full flex flex-col">
   
-        <div className="w-full h-full flex justify-center items-center">
-          <div className="w-[97.5%] rounded-lg border gap-y-2 border-gray-100 h-[90%] sm:flex-row flex-wrap flex flex-col justify-center items-center gap-x-7">
+        <div className="w-full h-full flex justify-center flex-col items-center">
+          <div className="rounded-lg border gap-y-2 border-gray-100 h-[90%] sm:flex-row flex-wrap flex flex-col justify-center  items-center gap-x-7">
             <div id="upcomingAarti" className="sm:w-[90%] w-[95%] h-[70%] flex flex-col justify-center rounded-lg bg-gray-200">
               <p className="text-4xl mx-3">आगामी आरती:</p>
               {upcomingAarti ? (

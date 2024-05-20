@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
         <Header />
         <div className="flex ">
           <Sidebar />
-          <div className="flex-grow  overflow-scroll w-[80vw]">{children}</div>
+          <div className="flex-grow  overflow-scroll w-[100vw]">{children}</div>
         </div>
       </div>
       
