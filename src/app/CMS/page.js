@@ -46,18 +46,18 @@ const CMS = () => {
 
   return (
     <Layout>
-      <div className="h-[100vh] min-h-[100vh] max-h-fit  w-full flex flex-col">
+      <div className="min-h-screen max-h-fit pb-4 overflow-scroll w-full flex flex-col">
         <section className="py-6 mb-10 dark:text-gray-50">
-          <div className="container grid grid-cols-2 gap-4 p-4 mx-auto md:grid-cols-4">
+          <div className="container  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 mx-auto">
             {images.map((image, index) => (
               <div
                 key={image.id}
-                className={`relative ${index === 0 || index === images.length - 1 ? 'col-span-2 row-span-2 min-h-96' : 'min-h-48'} dark:bg-gray-500 aspect-square`}
+                className={`relative -z-1 ${index === 0 || index === images.length - 1 ? 'col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 min-h-96' : 'min-h-48'} dark:bg-gray-500 aspect-square`}
               >
                 <img
                   src={image.url}
                   alt={image.name}
-                  className="w-full object-cover h-full rounded shadow-sm"
+                  className="w-full h-full object-cover rounded shadow-sm"
                   onClick={() => setSelectedImage(image.id)}
                 />
                 {selectedImage === image.id && (

@@ -7,7 +7,7 @@ export const Sidebar = () => {
   <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
   <div className="drawer-side">
     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay "></label> 
-    <ul className="menu p-4 sm:w-full min-h-full bg-base-200 items-center text-base-content">
+    <ul className="menu p-4 sm:w-full z-100 absolute min-h-full bg-base-200 items-center text-base-content">
     <Image  src={Bajrangbali} className="rounded-full h-[10vh] w-auto mb-5 object-cover"/>
       <li className="text-lg mb-5 font-bold w-full flex justify-center  items-center">
         
