@@ -1,118 +1,77 @@
 "use client";
 
-
 import { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy } from "@firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "@firebase/firestore";
 import { db } from "../API/firebase.config";
 
 import Layout from "@/components/Layout";
 
 const CMS = () => {
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [upcomingAarti, setUpcomingAarti] = useState(null);
-  const [upcomingPrasadi, setUpcomingPrasadi] = useState(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    const fetchDonations = async () => {
+    const fetchImages = async () => {
       try {
-        const donationsRef = collection(db, "donations");
-        const q = query(donationsRef);
-        const donationSnapshot = await getDocs(q);
-
-        const donationData = donationSnapshot.docs.map((doc) => ({
+        const querySnapshot = await getDocs(collection(db, "gallery"));
+        const imageData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        setDonations(donationData);
-
-        const total = donationData.reduce((acc, donation) => acc + parseInt(donation.amount), 0);
-        setTotalAmount(total);
-        setTotalDonationsCount(donationData.length);
-      } catch (error) {
-        console.error("Error fetching donations:", error);
+        setImages(imageData);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
       }
     };
 
-    const fetchUpcomingAarti = async () => {
-      try {
-        const aartiRef = collection(db, "verifiedAarti");
-        const q = query(aartiRef, orderBy("date", "asc"));
-        const aartiSnapshot = await getDocs(q);
-
-        const currentDate = new Date();
-        const upcomingAartiData = aartiSnapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .find((aarti) => new Date(aarti.date) > currentDate);
-
-        setUpcomingAarti(upcomingAartiData);
-      } catch (error) {
-        console.error("Error fetching upcoming Aarti:", error);
-      }
-    };
-
-    const fetchUpcomingPrasadi = async () => {
-      try {
-        const prasadiRef = collection(db, "verifiedPrasadi");
-        const q = query(prasadiRef, orderBy("date", "asc"));
-        const prasadiSnapshot = await getDocs(q);
-
-        const currentDate = new Date();
-        const upcomingPrasadiData = prasadiSnapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .find((prasadi) => new Date(prasadi.date) > currentDate);
-
-        setUpcomingPrasadi(upcomingPrasadiData);
-      } catch (error) {
-        console.error("Error fetching upcoming Prasadi:", error);
-      }
-    };
-
-    fetchDonations();
-    fetchUpcomingAarti();
-    fetchUpcomingPrasadi();
+    fetchImages();
   }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "gallery", id));
+      setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+      setSelectedImage(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <Layout>
-      <div className="h-[100vh] w-full flex flex-col">
-  
-        <div className="w-full h-full flex justify-center flex-col items-center">
-          <div className="rounded-lg border gap-y-2 border-gray-100 h-[90%] sm:flex-row flex-wrap flex flex-col justify-center  items-center gap-x-7">
-            <div id="upcomingAarti" className="sm:w-[90%] w-[95%] h-[70%] flex flex-col justify-center rounded-lg bg-gray-200">
-              <p className="text-4xl mx-3">आगामी आरती:</p>
-              {upcomingAarti ? (
-                <div className="mx-3 gap-y-3 flex flex-col">
-                <p className="text-2xl font-medium text-gray-900">आगामी आरती {upcomingAarti.name} के द्वारा दिनांक {upcomingAarti.date} को है</p>
-                <p className="text-xl font-medium text-gray-900">पिता का नाम:{upcomingAarti.fatherName}</p>
-                <p className="text-lg font-medium text-gray-900">Mobile Number:{upcomingAarti.mobileNumber}</p>
-                </div>
-              ) : (
-                <p className="text-2xl font-medium text-gray-900">No upcoming Aarti Booking</p>
-              )}
-            </div>
-            <div id="upcomingPrasadi"className="sm:w-[90%] w-[95%] h-[70%] flex flex-col justify-center rounded-lg bg-gray-200">
-              <p className="text-4xl mx-3">आगामी प्रसाद:</p>
-              {upcomingPrasadi ? (
-                <div className="mx-3 gap-y-3 flex flex-col">
-                <p className="text-2xl font-medium text-gray-900">आगामी प्रसाद {upcomingPrasadi.name} के द्वारा दिनांक {upcomingPrasadi.date} को है</p>
-                <p className="text-xl font-medium text-gray-900">पिता का नाम:{upcomingPrasadi.fatherName}</p>
-                <p className="text-lg font-medium text-gray-900">Mobile Number:{upcomingPrasadi.mobileNumber}</p>
-                </div>
-              ) : (
-                <p className="text-2xl font-medium text-gray-900">No upcoming Prasadi</p>
-              )}
-            </div>
-            <div className="sm:w-[90%] w-[95%] h-[75%] rounded-lg bg-gray-200"></div>
-            <div className="sm:w-[90%] w-[95%] h-[75%] rounded-lg bg-gray-200"></div>
+      <div className="h-[100vh] min-h-[100vh] max-h-fit  w-full flex flex-col">
+        <section className="py-6 mb-10 dark:text-gray-50">
+          <div className="container grid grid-cols-2 gap-4 p-4 mx-auto md:grid-cols-4">
+            {images.map((image, index) => (
+              <div
+                key={image.id}
+                className={`relative ${index === 0 || index === images.length - 1 ? 'col-span-2 row-span-2 min-h-96' : 'min-h-48'} dark:bg-gray-500 aspect-square`}
+              >
+                <img
+                  src={image.url}
+                  alt={image.name}
+                  className="w-full object-cover h-full rounded shadow-sm"
+                  onClick={() => setSelectedImage(image.id)}
+                />
+                {selectedImage === image.id && (
+                  <button
+                    className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                    onClick={() => handleDelete(image.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-        </div>
+        </section>
       </div>
     </Layout>
   );
