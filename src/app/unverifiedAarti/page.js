@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { collection, getDocs, query, doc, updateDoc, deleteDoc, addDoc } from "@firebase/firestore";
+import { collection, getDocs, query, doc, updateDoc, deleteDoc, addDoc, getDoc } from "@firebase/firestore";
 import { db } from "../API/firebase.config";
 import Layout from "@/components/Layout";
 import { GoCheckCircle } from "react-icons/go";
@@ -24,7 +24,7 @@ const UnverifiedAarti = () => {
           verified: false,
         }));
         setDonations(donationData);
-        const total = donationData.reduce((acc, donation) => acc + parseInt(donation.amount), 0);
+        const total = donationData.reduce((acc, donation) => acc + parseInt(donation.donationAmount), 0);
         setTotalAmount(total);
         setTotalDonationsCount(donationData.length);
       } catch (error) {
@@ -89,7 +89,7 @@ const UnverifiedAarti = () => {
       const donation = { id: donationSnapshot.id, ...donationSnapshot.data() };
       if (donation) {
         await transferToVerified(donation);
-        setTotalAmount((prevTotal) => prevTotal - parseInt(donation.amount));
+        setTotalAmount((prevTotal) => prevTotal - parseInt(donation.donationAmount));
         setTotalDonationsCount((prevCount) => prevCount - 1);
       }
     } catch (error) {
