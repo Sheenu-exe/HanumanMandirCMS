@@ -3,7 +3,7 @@ import Bajrangbali from "../components/img/Hanumanji gys.webp"
 import Link from "next/link"
 export const Sidebar = () => {
     return(
-<div className="drawer sm:w-[20vw] w-0 sticky top-0 left-0 lg:drawer-open">
+<div className="drawer z-10 sm:w-[20vw] w-0 sticky top-0 left-0 lg:drawer-open">
   <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
   <div className="drawer-side">
     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay "></label> 
